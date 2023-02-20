@@ -12,7 +12,9 @@ router.get('/new', (req, res) => res.render('articles/new'))
 router.get('/edit/:id', articlesController.editSelectedArticlePage)
 router.put('/edit/:id', articlesController.editSelectedArticle)
 
-router.delete(articlesController.deleteSelectedArticle);
+router.delete('/', articlesController.deleteSelectedArticle);
+
+router.put('/publish/:id', articlesController.publishArticle)
 
 
 

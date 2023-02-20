@@ -3,7 +3,14 @@ const Article = require("../models/article");
 //show full details of selected article
 exports.showArticle = (async(req, res) => {
     try{
-        const article = await Article.findOne({ slug: req.params.slug })
+        const article = await Article.findOneAndUpdate({ slug: req.params.slug },
+          {
+            $inc: {
+              "read_count" : 1
+            }
+          },
+          { new: true } )
+
         if (article == null) res.redirect('/')
         else if (article.author == req.user) {
             res.render('articles/isloggedInshow', { article : article })
@@ -18,7 +25,6 @@ exports.showArticle = (async(req, res) => {
 })
 
 //CREATE ARTICLE - onCreate, article will be in draft state
-
 exports.createNewArticle = async(req, res) => {
 
   //add image---upload image using multer
@@ -26,6 +32,7 @@ exports.createNewArticle = async(req, res) => {
       return res.status(400).json({"message": "title and description are required"});
   }
   try{
+      let reading_time =  Math.ceil(` ${(req.body.body).length}`/ 250)
       const article ={
           "title": req.body.title,
           "description": req.body.description,
@@ -33,15 +40,15 @@ exports.createNewArticle = async(req, res) => {
           "body": req.body.body,
           "tag": req.body.tag,
           "read_count": 0,
-          //"reading_time": (req.body).forEach(element => {}   
+          "reading_time": reading_time 
       };
       await Article.create(article)
-      res.redirect(`/articles/${(article.title).toLowerCase()}`)
+      res.redirect(`/home/${(article.title).toLowerCase()}`)
       //res.status(201).json({"message": "Project created"}) // created
   }
   catch (err) {
-      //return res.status(500).json({"message": err.message});
-      res.render('articles/new')
+      return res.status(500).json({"message": err.message});
+      //res.render('articles/new')
   }
 }
 
@@ -54,7 +61,6 @@ exports.editSelectedArticlePage = (async (req, res) => {
 
 })
 
-
 exports.editSelectedArticle = async(req, res) => {
     const article = await Article.findById(req.params.id);
     try {
@@ -65,7 +71,7 @@ exports.editSelectedArticle = async(req, res) => {
         else {
             if (article.author === req.user) {
                 try {
-                  const article = await Blog.findByIdAndUpdate(
+                  const article = await Article.findByIdAndUpdate(
                     req.params.id,
                     {
                       $set: req.body,
@@ -75,13 +81,14 @@ exports.editSelectedArticle = async(req, res) => {
                   res.render('articles/isloggedInshow', { article : article })
                   //res.status(200).json(updatedArticle);
                 } catch (err) {res.status(500).json(err)};
-            } else {res.status(401).json("You can update only your article!")}
+            }else{
+              res.render('show', { article : article } )
+              //res.status(401).json("You can update only your article!")
+            }
         }
     }
     catch (err) {res.status(500).json(err)}
 }
-
-
 
 //DELETE BLOG
 exports.deleteSelectedArticle = async(req, res) => {
@@ -105,78 +112,20 @@ exports.deleteSelectedArticle = async(req, res) => {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// //UPDATE BLOG: can only be done by author of blog
-// exports.updateSelectedArticle = async(req, res) => {
-//     const blog = await Blog.findById(req.params.id);
-//     try {
-//         if(!blog) {
-//           return res.status(200).json({"message": "Blog doesn't exist" });
-//         }
-//         else {
-//             if (blog.author === req.user) {
-//                 try {
-//                   const updatedBlog = await Blog.findByIdAndUpdate(
-//                     req.params.id,
-//                     {
-//                       $set: req.body,
-//                     },
-//                     { new: true }
-//                   );
-//                   res.status(200).json(updatedBlog);
-//                 } catch (err) {res.status(500).json(err)};
-//             } else {res.status(401).json("You can update only your blog!")}
-//         }
-//     }
-//     catch (err) {res.status(500).json(err)}
-// }
-
-
-// //GET ALL BLOGS CREATED BY USER
-// exports.getAllUserArticle= async(req, res) => {
-//     try {
-//         const page = req.query.p || 0
-//         const blogsPerPage = 3
-//         const blogs = await Blog.find({author: req.User})
-//           .skip(page * blogsPerPage)
-//           .limit(blogsPerPage)
-//         res.status(200).json(blogs) 
-//     } 
-//     catch (err) {
-//         res.status(500).json(err);
-//     }
-// }
-
-// //GET SELECTED BLOG
-// exports.getSelectedArticle= async(req, res) => {
-//   const blog = await Blog.findById(req.params.id);
-//   if(!blog) {
-//       return res.status(204).json({"message": "No project matches search"});}
-//   res.json(blog);
-// }
-
-
-
-
-
-
+//PUBLISH ARTICLE
+exports.publishArticle = async(req, res) => {
+  try {
+    const article = await Article.findByIdAndUpdate( req.params.id,
+      {
+        $set: {
+          "state" : "published"
+        }
+      },
+      { new: true } )
+          //res.status(200).json("article has been published...");
+          res.redirect('/')
+    } 
+  catch (err) {
+        res.status(500).json(err);
+  }
+}

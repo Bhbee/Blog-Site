@@ -29,7 +29,7 @@ const ArticleSchema = new mongoose.Schema(
       required: true,
     },
     read_count: {
-      type: String,
+      type: Number,
       required: true,
     },
     slug: {
@@ -37,10 +37,10 @@ const ArticleSchema = new mongoose.Schema(
       required: true,
       unique: true
     },
-    // reading_time: {
-    //   type: String,
-    //   required: true,
-    // },
+    reading_time: {
+      type: String,
+      required: true,
+    },
    
   },
  

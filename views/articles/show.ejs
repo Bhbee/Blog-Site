@@ -1,12 +1,18 @@
 <div class="container">
     <h2 class="mb-4">Bhbee Blog~Site</h2>
-    <a href="/" class="btn btn-primary my-5">All Articles</a>
-    <h2 class="mb-1"><%= article.title %></h2>
+    <h5 class="mb-1 d-inline"><%= article.title %></h5>
+    <p class="d-inline"> .......By <%= article.author %></p>
+    
+
     <div class="text-muted mb-2">
         <%= article.createdAt.toLocaleDateString() %>
     </div>
+    <p class="d-inline"> A <%= article.reading_time %> minutes read</p>
+    <p> Read_Count: <%= article.read_count %></p>
     
-    <div>
+    <a href="/" class="btn btn-primary">All Articles</a>
+
+    <div class= "my-3">
         <%- article.body %>
     </div>
 </div>

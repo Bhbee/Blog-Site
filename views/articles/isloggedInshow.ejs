@@ -1,15 +1,27 @@
 <div class="container">
-    <h2 class="mb-4">Bhbee Blog~Site</h2>
-    <h2 class="mb-1"><%= article.title %></h2>
+    <h2 class="mb-3">Bhbee Blog~Site</h2>
+    <h5 class="mb-1 d-inline"><%= article.title %></h5>
+    <p class="d-inline"> .......By <%= article.author %></p>
+    
+
     <div class="text-muted mb-2">
         <%= article.createdAt.toLocaleDateString() %>
     </div>
+    <p class="d-inline"> A <%= article.reading_time %> minutes read</p>
+    <p> Read_Count: <%= article.read_count %></p>
+
     <a href="/" class="btn btn-secondary">All Articles</a>
     <a href="articles/edit/<%= article.id %>" class="btn btn-info">Edit</a>
+    
+    <form action="/articles/publish/<%= article.id %>?_method=PUT" method="POST" class="d-inline">
+        <button type="publish" class="btn btn-success">Publish</button>
+    </form>
+
     <form action="/articles/<%= article.id %>?_method=DELETE" method="POST" class="d-inline">
       <button type="submit" class="btn btn-danger">Delete</button>
     </form>
-    <div>
+
+    <div class= "my-3">
         <%- article.body %>
     </div>
 </div>
