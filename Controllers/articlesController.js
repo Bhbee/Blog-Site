@@ -13,7 +13,7 @@ exports.showArticle = (async(req, res) => {
 
         if (article == null) res.redirect('/')
         else if (article.author == req.user) {
-            res.render('articles/isloggedInshow', { article : article })
+            res.render('articles/isAuthorshow', { article : article })
         }
         else {
           res.render('articles/show', { article : article })

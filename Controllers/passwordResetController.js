@@ -22,19 +22,19 @@ exports.getLink = async(req, res) => {
         const token = jwt.sign({ email: User.email, id: User._id }, secret, {
             expiresIn: "10m",
         });
-        const link = `http://localhost:3000/auth/reset-password/${User._id}/${token}`;
+        const link = `http://localhost:4000/auth/reset-password/${User._id}/${token}`;
         var transporter = nodemailer.createTransport({
             service: 'gmail',
             host: 'smtp.gmail.com',
             secure: false,
             auth: {
-                user: "samuelchristiana38@gmail.com ",
-                pass: "lfdeltnqsdtoqbrc",
+                user: process.env.EMAIL,
+                pass: process.env.PASSWORD,
             },
         });
     
         var mailOptions = {
-            from: "samuelchristiana38@gmail.com ",
+            from: "process.env.EMAIL ",
             to: checkEmail,
             subject: "Password Reset",
             text: link,

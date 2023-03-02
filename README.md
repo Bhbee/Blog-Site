@@ -41,6 +41,7 @@ User
 - email is required and should be unique
 - first_name and last_name is required
 - password
+  
 Blog/Article
 - title is required and unique
 - description
